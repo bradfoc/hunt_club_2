@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Hunt Club</title>
+<meta name="apple-mobile-web-app-title" content="Hunt Club">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#152a1c">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyNjE5Ii8+PHBhdGggZD0iTTkwIDI4IEw5MCAxMzYiIHN0cm9rZT0iI2Y0N2MyMCIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNOTAgMzYgTDQ4IDcwIE05MCAzNiBMMTMyIDcwIE05MCA2NCBMNjAgOTggTTkwIDY0IEwxMjAgOTgiIHN0cm9rZT0iI2Y0N2MyMCIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI5MCIgY3k9IjE0OCIgcj0iMTAiIGZpbGw9IiNmNDdjMjAiLz48L3N2Zz4=">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyNjE5Ii8+PHBhdGggZD0iTTkwIDI4IEw5MCAxMzYiIHN0cm9rZT0iI2Y0N2MyMCIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNOTAgMzYgTDQ4IDcwIE05MCAzNiBMMTMyIDcwIE05MCA2NCBMNjAgOTggTTkwIDY0IEwxMjAgOTgiIHN0cm9rZT0iI2Y0N2MyMCIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI5MCIgY3k9IjE0OCIgcj0iMTAiIGZpbGw9IiNmNDdjMjAiLz48L3N2Zz4=">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --bg-0:#0f1e14;
+    --bg-1:#152a1c;
+    --bg-2:#1e3826;
+    --bg-3:#274732;
+    --line:#33553f;
+    --orange:#f47c20;
+    --orange-dim:#c9611a;
+    --text:#f4f2ea;
+    --text-dim:#a9bcae;
+    --danger:#d64545;
+    --font-head:'Oswald',system-ui,sans-serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg-0);color:var(--text);font-family:var(--font-body);overscroll-behavior:none;}
+  body{
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(244,124,32,0.05), transparent 40%),
+      repeating-radial-gradient(circle at 50% 0%, transparent 0, transparent 60px, rgba(255,255,255,0.015) 61px, transparent 62px);
+  }
+  #app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:560px;margin:0 auto;position:relative;}
+
+  /* header */
+  header.top{
+    padding:14px 16px 10px;
+    background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::before{
+    content:"";position:absolute;inset:0;opacity:0.35;pointer-events:none;
+    background-image:
+      radial-gradient(ellipse 140% 60% at 30% 120%, transparent 30%, transparent 32%, var(--bg-1) 33%),
+      repeating-linear-gradient(0deg, transparent 0 14px, rgba(244,124,32,0.05) 14px 15px);
+  }
+  header.top h1{
+    font-family:var(--font-head);font-size:19px;letter-spacing:0.04em;margin:0;
+    text-transform:uppercase;position:relative;z-index:1;display:flex;align-items:center;gap:8px;
+  }
+  header.top h1 .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange);}
+  header.top .sub{color:var(--text-dim);font-size:12px;margin-top:2px;position:relative;z-index:1;}
+
+  main{flex:1;overflow-y:auto;padding:14px 16px 90px;}
+  main.no-pad{padding:0 0 74px;}
+
+  /* nav */
+  nav.bottom{
+    position:absolute;bottom:0;left:0;right:0;
+    display:flex;background:var(--bg-1);border-top:1px solid var(--line);
+    padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px);
+    z-index:500;
+  }
+  nav.bottom button{
+    flex:1;background:none;border:none;color:var(--text-dim);
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;font-size:10.5px;font-family:var(--font-body);font-weight:600;
+    letter-spacing:0.02em;border-radius:10px;
+  }
+  nav.bottom button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  nav.bottom button.active{color:var(--orange);}
+  nav.bottom button.active svg{filter:drop-shadow(0 0 4px rgba(244,124,32,0.5));}
+
+  /* cards */
+  .card{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;}
+  .card h2{font-family:var(--font-head);font-size:14px;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 10px;color:var(--orange);}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:5px;}
+  input,select,textarea{
+    width:100%;background:var(--bg-1);border:1px solid var(--line);color:var(--text);
+    padding:11px 12px;border-radius:9px;font-size:15px;font-family:var(--font-body);margin-bottom:10px;
+  }
+  input::placeholder,textarea::placeholder{color:#6f8577;}
+  textarea{resize:vertical;min-height:60px;}
+  button.btn{
+    background:var(--orange);color:#1a1005;border:none;font-weight:700;
+    padding:12px 16px;border-radius:9px;font-size:15px;width:100%;letter-spacing:0.02em;
+  }
+  button.btn.secondary{background:var(--bg-3);color:var(--text);border:1px solid var(--line);}
+  button.btn.danger{background:var(--danger);color:#fff;}
+  button.btn.ghost{background:transparent;color:var(--orange);border:1px solid var(--orange-dim);}
+  button.btn:active{transform:scale(0.98);}
+  .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;}
+  .pill.on{background:rgba(244,124,32,0.18);color:var(--orange);}
+  .pill.off{background:rgba(255,255,255,0.06);color:var(--text-dim);}
+  .member-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+  .member-row:last-child{border-bottom:none;}
+  .member-name{font-weight:600;font-size:15px;}
+  .member-meta{font-size:12px;color:var(--text-dim);margin-top:2px;}
+  a.call{color:var(--orange);text-decoration:none;font-size:13px;font-weight:600;border:1px solid var(--orange-dim);padding:6px 10px;border-radius:8px;}
+  .empty{color:var(--text-dim);font-size:13px;text-align:center;padding:30px 10px;}
+
+  /* map page */
+  #mapwrap{position:relative;height:100%;min-height:300px;}
+  #map{position:absolute;inset:0;background:#0f1e14;}
+  .map-filters{
+    position:absolute;top:10px;left:10px;right:10px;z-index:400;
+    background:rgba(21,42,28,0.92);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:12px;padding:10px;
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  }
+  .chip{
+    background:var(--bg-1);border:1px solid var(--line);color:var(--text-dim);
+    font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;
+  }
+  .chip.active{background:rgba(244,124,32,0.18);color:var(--orange);border-color:var(--orange-dim);}
+  select.species-filter{width:auto;margin:0;padding:6px 8px;font-size:12px;background:var(--bg-1);}
+  .map-legend{position:absolute;bottom:14px;left:10px;z-index:400;background:rgba(21,42,28,0.92);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--text-dim);}
+
+  /* SOS */
+  .sos-btn{
+    background:var(--danger);color:#fff;border:none;border-radius:14px;padding:16px;
+    font-family:var(--font-head);font-size:16px;letter-spacing:0.05em;text-transform:uppercase;width:100%;
+    box-shadow:0 0 0 4px rgba(214,69,69,0.15);
+  }
+  .banner{background:rgba(214,69,69,0.15);border:1px solid var(--danger);color:#ffb3b3;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:12px;}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;display:flex;align-items:flex-end;justify-content:center;}
+  .modal{background:var(--bg-2);border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 18px);width:100%;max-width:560px;max-height:85vh;overflow-y:auto;}
+  .modal h3{font-family:var(--font-head);text-transform:uppercase;font-size:16px;color:var(--orange);margin:0 0 12px;}
+  .close-x{position:absolute;top:12px;right:16px;color:var(--text-dim);font-size:22px;background:none;border:none;}
+  .photo-preview{width:100%;border-radius:10px;margin-bottom:10px;max-height:180px;object-fit:cover;}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg-3);border:1px solid var(--orange-dim);color:var(--text);padding:10px 18px;border-radius:20px;font-size:13px;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+  .stand-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+  .stand-item:last-child{border-bottom:none;}
+  .kindtag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase;}
+  .kindtag.wildlife{background:rgba(120,180,90,0.2);color:#a6d67f;}
+  .kindtag.camera{background:rgba(90,150,220,0.2);color:#8fc0ff;}
+  .kindtag.hazard{background:rgba(214,69,69,0.2);color:#ff9b9b;}
+  code.link-box{display:block;background:var(--bg-1);border:1px solid var(--line);padding:10px;border-radius:8px;font-size:12px;word-break:break-all;color:var(--text-dim);margin-bottom:10px;}
+  .setup-wrap{display:flex;align-items:center;justify-content:center;min-height:100%;padding:20px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ---------- Firebase / Firestore setup ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBPVJMvesA4R0bogj91ogewDrwpJ_lA3p8",
+  authDomain: "hunt-club-5007d.firebaseapp.com",
+  projectId: "hunt-club-5007d",
+  storageBucket: "hunt-club-5007d.firebasestorage.app",
+  messagingSenderId: "876371070875",
+  appId: "1:876371070875:web:5900f1d645e1562a00db3e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* Collections: members, stands, sightings, checkins, sos — one document per record */
+async function fsSet(collection, id, data){
+  try{ await db.collection(collection).doc(id).set(data); return true; }
+  catch(e){ console.error('firestore set failed', collection, e); toast('Could not save — check your connection'); return false; }
+}
+async function fsDelete(collection, id){
+  try{ await db.collection(collection).doc(id).delete(); return true; }
+  catch(e){ console.error('firestore delete failed', collection, e); return false; }
+}
+function uid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+Math.random().toString(16).slice(2)); }
+
+/* personal, device-local profile (not shared — plain browser storage, safe outside Claude) */
+function getMyProfile(){ try{ const v = localStorage.getItem('hc-my-profile'); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
+function setMyProfile(p){ try{ localStorage.setItem('hc-my-profile', JSON.stringify(p)); }catch(e){} }
+
+/* ---------- state ---------- */
+let ME = null;               // {id,name,phone,isAdmin}
+let MEMBERS = [];
+let STANDS = [];
+let SIGHTINGS = [];
+let ACTIVE = [];             // active checkins
+let SOS = [];
+let TAB = 'home';
+let map, layerGroups = {};
+let watchId = null;
+let speciesFilterVal = 'all';
+let layerToggles = {stands:true, camera:true, wildlife:true, hazard:true, members:true};
+
+const SPECIES = ['Whitetail Deer','Turkey','Hog','Black Bear','Coyote','Bobcat','Duck','Other'];
+
+/* ---------- viewport height fix (iOS standalone home-screen mode) ---------- */
+function setAppHeight(){
+  const el = document.getElementById('app');
+  if(el) el.style.height = window.innerHeight + 'px';
+}
+window.addEventListener('resize', ()=>{ setAppHeight(); if(map) setTimeout(()=>map.invalidateSize(), 100); });
+window.addEventListener('orientationchange', ()=>{ setAppHeight(); if(map) setTimeout(()=>map.invalidateSize(), 200); });
+
+/* ---------- boot ---------- */
+function boot(){
+  setAppHeight();
+  ME = getMyProfile();
+  render();
+  startLiveSync();
+}
+function startLiveSync(){
+  db.collection('members').onSnapshot(snap=>{
+    MEMBERS = snap.docs.map(d=>d.data());
+    if(!ME){ render(); return; }
+    if(TAB==='home') renderHome(); if(TAB==='roster') renderRoster(); if(TAB==='settings') renderSettings();
+  }, e=>console.error('members sync', e));
+  db.collection('stands').onSnapshot(snap=>{
+    STANDS = snap.docs.map(d=>d.data());
+    if(TAB==='home') renderHome(); if(TAB==='settings') renderSettings(); if(TAB==='map') updateMapMarkers();
+  }, e=>console.error('stands sync', e));
+  db.collection('sightings').onSnapshot(snap=>{
+    SIGHTINGS = snap.docs.map(d=>d.data()).sort((a,b)=>a.timestamp-b.timestamp);
+    if(TAB==='log') renderLog(); if(TAB==='map') updateMapMarkers();
+  }, e=>console.error('sightings sync', e));
+  db.collection('checkins').onSnapshot(snap=>{
+    ACTIVE = snap.docs.map(d=>d.data());
+    if(TAB==='home') renderHome(); if(TAB==='roster') renderRoster(); if(TAB==='map') updateMapMarkers();
+  }, e=>console.error('checkins sync', e));
+  db.collection('sos').onSnapshot(snap=>{
+    SOS = snap.docs.map(d=>d.data());
+    if(TAB==='home') renderHome();
+  }, e=>console.error('sos sync', e));
+}
+
+/* ---------- render root ---------- */
+function render(){
+  const app = document.getElementById('app');
+  if(!ME){ app.innerHTML = setupScreen(); attachSetupHandlers(); return; }
+  app.innerHTML = `
+    <header class="top">
+      <h1><span class="dot"></span> Hunt Club</h1>
+      <div class="sub">${escapeHtml(ME.name)}${ME.isAdmin ? ' · Property Admin' : ''}</div>
+    </header>
+    <main id="main" class="${TAB==='map' ? 'no-pad' : ''}"></main>
+    <nav class="bottom">
+      ${navBtn('home','Check-In', iconCompass())}
+      ${navBtn('map','Map', iconMap())}
+      ${navBtn('log','Log', iconCamera())}
+      ${navBtn('roster','Roster', iconPeople())}
+      ${navBtn('settings','Setup', iconGear())}
+    </nav>
+  `;
+  document.querySelectorAll('nav.bottom button').forEach(b=>{
+    b.onclick = ()=>{ TAB = b.dataset.tab; if(map){map.remove(); map=null;} render(); };
+  });
+  renderTab();
+}
+function navBtn(tab,label,svg){
+  return `<button data-tab="${tab}" class="${TAB===tab?'active':''}">${svg}<span>${label}</span></button>`;
+}
+function renderTab(){
+  if(TAB==='home') renderHome();
+  else if(TAB==='map') renderMap();
+  else if(TAB==='log') renderLog();
+  else if(TAB==='roster') renderRoster();
+  else if(TAB==='settings') renderSettings();
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg){
+  const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 2400);
+}
+function getPos(){
+  return new Promise((resolve,reject)=>{
+    if(!navigator.geolocation){ reject('no geo'); return; }
+    navigator.geolocation.getCurrentPosition(p=>resolve({lat:p.coords.latitude,lng:p.coords.longitude}), reject, {enableHighAccuracy:true, timeout:8000});
+  });
+}
+
+/* ---------- setup screen (first run) ---------- */
+function setupScreen(){
+  const noAdminYet = MEMBERS.length===0 || !MEMBERS.some(m=>m.isAdmin);
+  return `
+  <div class="setup-wrap"><div class="card" style="max-width:420px;width:100%;">
+    <h2 style="text-align:center;font-size:18px;">🦌 Welcome to the Club</h2>
+    <p style="color:var(--text-dim);font-size:13px;margin-top:-4px;">Enter your info to check in and get on the map. This is stored once on your phone.</p>
+    <label class="label">Your Name</label>
+    <input id="su-name" placeholder="e.g. Jake Miller">
+    <label class="label">Phone Number</label>
+    <input id="su-phone" placeholder="e.g. (555) 123-4567" type="tel">
+    ${noAdminYet ? `
+    <div class="row" style="margin:6px 0 12px;">
+      <label class="label" style="margin:0;">Make me the Property Administrator</label>
+      <input id="su-admin" type="checkbox" style="width:20px;height:20px;" checked>
+    </div>
+    <div class="banner">No administrator has been set up yet. The admin sets stand locations and manages the property.</div>
+    ` : ''}
+    <button class="btn" id="su-submit">Join Club</button>
+  </div></div>`;
+}
+function attachSetupHandlers(){
+  document.getElementById('su-submit').onclick = async ()=>{
+    const name = document.getElementById('su-name').value.trim();
+    const phone = document.getElementById('su-phone').value.trim();
+    if(!name){ toast('Enter your name'); return; }
+    const adminBox = document.getElementById('su-admin');
+    const isAdmin = adminBox ? adminBox.checked : false;
+    const profile = { id: uid(), name, phone, isAdmin };
+    ME = profile;
+    setMyProfile(profile);
+    await fsSet('members', profile.id, profile);
+    render();
+  };
+}
+
+/* ---------- HOME / CHECK-IN ---------- */
+function renderHome(){
+  const main = document.getElementById('main'); if(!main) return;
+  const myActive = ACTIVE.find(a=>a.memberId===ME.id);
+  const activeSos = SOS.filter(s=>!s.resolved);
+  main.innerHTML = `
+    ${activeSos.length ? activeSos.map(s=>`
+      <div class="banner">🚨 <strong>${escapeHtml(s.name)}</strong> triggered SOS ${timeAgo(s.timestamp)} near their last location. Check the map or call them.
+        ${s.memberId===ME.id ? `<div style="margin-top:8px;"><button class="btn secondary" data-resolve="${s.id}">Mark Resolved</button></div>` : ''}
+      </div>`).join('') : ''}
+
+    <div class="card">
+      <h2>Property Check-In</h2>
+      ${myActive ? `
+        <div class="row" style="margin-bottom:10px;">
+          <div><div class="member-name">You're checked in</div><div class="member-meta">Stand: ${escapeHtml(myActive.stand)} · since ${timeAgo(myActive.timestamp)}</div></div>
+          <span class="pill on">On Property</span>
+        </div>
+        <button class="btn secondary" id="checkout-btn">Check Out — Leaving Property</button>
+      ` : `
+        <label class="label">Which stand are you heading to?</label>
+        <select id="stand-select">
+          <option value="">Choose a stand…</option>
+          ${STANDS.map(s=>`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('')}
+          <option value="__other">Other / not listed</option>
+        </select>
+        <button class="btn" id="checkin-btn">Check In — I'm On the Property</button>
+      `}
+    </div>
+
+    <div class="card">
+      <h2>Who's On Property</h2>
+      ${ACTIVE.length===0 ? `<div class="empty">No one is currently checked in.</div>` :
+        ACTIVE.map(a=>`
+        <div class="member-row">
+          <div><div class="member-name">${escapeHtml(a.name)}</div><div class="member-meta">${escapeHtml(a.stand)} · ${timeAgo(a.timestamp)}</div></div>
+          <span class="pill on">Active</span>
+        </div>`).join('')}
+    </div>
+
+    <button class="sos-btn" id="sos-btn">🆘 Send SOS to All Members</button>
+    <p style="color:var(--text-dim);font-size:11.5px;text-align:center;margin-top:10px;">Keep the app open in Safari while on the property so your location keeps syncing to the group.</p>
+  `;
+  const ci = document.getElementById('checkin-btn');
+  if(ci) ci.onclick = doCheckIn;
+  const co = document.getElementById('checkout-btn');
+  if(co) co.onclick = doCheckOut;
+  const sos = document.getElementById('sos-btn');
+  if(sos) sos.onclick = doSOS;
+  document.querySelectorAll('[data-resolve]').forEach(b=>{
+    b.onclick = async ()=>{
+      const s = SOS.find(x=>x.id===b.dataset.resolve);
+      if(s) await fsSet('sos', s.id, {...s, resolved:true});
+      renderHome();
+    };
+  });
+}
+async function doCheckIn(){
+  const sel = document.getElementById('stand-select');
+  const stand = sel.value === '__other' ? 'Other area' : sel.value;
+  if(!stand){ toast('Pick a stand first'); return; }
+  let pos = {lat:null,lng:null};
+  try{ pos = await getPos(); }catch(e){ toast('Could not get GPS — checking in without location'); }
+  await fsSet('checkins', ME.id, {memberId:ME.id, name:ME.name, stand, lat:pos.lat, lng:pos.lng, timestamp:Date.now()});
+  beginWatch();
+  toast('Checked in — stay safe out there');
+  renderHome();
+}
+async function doCheckOut(){
+  await fsDelete('checkins', ME.id);
+  stopWatch();
+  toast('Checked out');
+  renderHome();
+}
+async function doSOS(){
+  let pos = {lat:null,lng:null};
+  try{ pos = await getPos(); }catch(e){}
+  const id = uid();
+  await fsSet('sos', id, {id, memberId:ME.id, name:ME.name, lat:pos.lat, lng:pos.lng, timestamp:Date.now(), resolved:false});
+  toast('SOS sent to all members');
+  renderHome();
+}
+function beginWatch(){
+  if(watchId!==null || !navigator.geolocation) return;
+  watchId = navigator.geolocation.watchPosition(async (p)=>{
+    const mine = ACTIVE.find(a=>a.memberId===ME.id);
+    if(!mine) return;
+    await fsSet('checkins', ME.id, {...mine, lat:p.coords.latitude, lng:p.coords.longitude});
+  }, ()=>{}, {enableHighAccuracy:true, maximumAge:15000});
+}
+function stopWatch(){ if(watchId!==null){ navigator.geolocation.clearWatch(watchId); watchId=null; } }
+function timeAgo(ts){
+  if(!ts) return '';
+  const m = Math.round((Date.now()-ts)/60000);
+  if(m<1) return 'just now';
+  if(m<60) return m+'m ago';
+  const h = Math.round(m/60); return h+'h ago';
+}
+
+/* ---------- MAP ---------- */
+function renderMap(){
+  const main = document.getElementById('main'); if(!main) return;
+  main.innerHTML = `<div id="mapwrap">
+    <div class="map-filters">
+      <div class="chip active" data-toggle="stands">📍 Stands</div>
+      <div class="chip active" data-toggle="camera">📷 Cameras</div>
+      <div class="chip active" data-toggle="wildlife">🦌 Wildlife</div>
+      <div class="chip active" data-toggle="hazard">⚠️ Hazards</div>
+      <div class="chip active" data-toggle="members">🟢 Members</div>
+      <select class="species-filter" id="species-filter">
+        <option value="all">All species</option>
+        ${SPECIES.map(s=>`<option value="${s}">${s}</option>`).join('')}
+      </select>
+    </div>
+    <div id="map"></div>
+    <div class="map-legend">Tap a pin for details</div>
+  </div>`;
+
+  if(typeof L === 'undefined'){
+    document.getElementById('mapwrap').innerHTML = `<div class="empty" style="padding:60px 20px;">Map library failed to load. Check your internet connection and reopen the app.</div>`;
+    return;
+  }
+  const center = STANDS.length ? [STANDS[0].lat, STANDS[0].lng] : [39.8283,-98.5795];
+  const zoom = STANDS.length ? 15 : 4;
+  map = L.map('map', {zoomControl:true}).setView(center, zoom);
+
+  const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap'});
+  const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:'© Esri'});
+  const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {maxZoom:17, attribution:'© OpenTopoMap'});
+
+  satellite.addTo(map);
+  L.control.layers({ 'Satellite': satellite, 'Topographic': topo, 'Street': street }, null, {position:'topright'}).addTo(map);
+
+  layerGroups = { stands:L.layerGroup().addTo(map), camera:L.layerGroup().addTo(map), wildlife:L.layerGroup().addTo(map), hazard:L.layerGroup().addTo(map), members:L.layerGroup().addTo(map) };
+
+  document.querySelectorAll('.chip[data-toggle]').forEach(c=>{
+    c.onclick = ()=>{
+      const key = c.dataset.toggle;
+      layerToggles[key] = !layerToggles[key];
+      c.classList.toggle('active', layerToggles[key]);
+      updateMapMarkers();
+    };
+  });
+  document.getElementById('species-filter').onchange = (e)=>{ speciesFilterVal = e.target.value; updateMapMarkers(); };
+
+  // long-press / click to add a stand if admin
+  if(ME.isAdmin){
+    map.on('contextmenu', (e)=> openAddStandModal(e.latlng.lat, e.latlng.lng));
+  }
+
+  updateMapMarkers();
+  setTimeout(()=>{ if(map) map.invalidateSize(); }, 150);
+  setTimeout(()=>{ if(map) map.invalidateSize(); }, 500);
+}
+function orangeIcon(emoji){
+  return L.divIcon({ html:`<div style="background:var(--bg-1);border:2px solid var(--orange);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,0.5);">${emoji}</div>`, className:'', iconSize:[30,30], iconAnchor:[15,15] });
+}
+function updateMapMarkers(){
+  if(!map) return;
+  Object.values(layerGroups).forEach(g=>g.clearLayers());
+
+  if(layerToggles.stands) STANDS.forEach(s=>{
+    L.marker([s.lat,s.lng], {icon:orangeIcon('📍')}).addTo(layerGroups.stands)
+      .bindPopup(`<b>${escapeHtml(s.name)}</b><br>${escapeHtml(s.notes||'')}`);
+  });
+
+  SIGHTINGS.forEach(s=>{
+    if(s.kind==='camera' && layerToggles.camera){
+      L.marker([s.lat,s.lng], {icon:orangeIcon('📷')}).addTo(layerGroups.camera).bindPopup(sightingPopup(s));
+    } else if(s.kind==='wildlife' && layerToggles.wildlife && (speciesFilterVal==='all' || s.species===speciesFilterVal)){
+      L.marker([s.lat,s.lng], {icon:orangeIcon('🦌')}).addTo(layerGroups.wildlife).bindPopup(sightingPopup(s));
+    } else if(s.kind==='hazard' && layerToggles.hazard){
+      L.marker([s.lat,s.lng], {icon:orangeIcon('⚠️')}).addTo(layerGroups.hazard).bindPopup(sightingPopup(s));
+    }
+  });
+
+  if(layerToggles.members) ACTIVE.forEach(a=>{
+    if(a.lat==null) return;
+    L.marker([a.lat,a.lng], {icon:orangeIcon('🟢')}).addTo(layerGroups.members)
+      .bindPopup(`<b>${escapeHtml(a.name)}</b><br>${escapeHtml(a.stand)}<br><span style="color:#888">${timeAgo(a.timestamp)}</span>`);
+  });
+}
+function sightingPopup(s){
+  const img = s.photo ? `<img src="${s.photo}" style="width:140px;border-radius:6px;display:block;margin-top:6px;">` : '';
+  return `<b>${escapeHtml(s.kind==='wildlife' ? s.species : (s.kind==='camera' ? 'Camera' : 'Hazard'))}</b><br>${escapeHtml(s.note||'')}<br><span style="color:#888;font-size:11px;">by ${escapeHtml(s.author)} · ${timeAgo(s.timestamp)}</span>${img}`;
+}
+
+/* add stand modal (admin, from map long-press) */
+function openAddStandModal(lat,lng){
+  const bg = document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML = `<div class="modal">
+    <h3>New Stand</h3>
+    <label class="label">Stand Name</label>
+    <input id="ns-name" placeholder="e.g. North Ridge Box Stand">
+    <label class="label">Notes</label>
+    <textarea id="ns-notes" placeholder="Access path, capacity, etc."></textarea>
+    <button class="btn" id="ns-save">Save Stand</button>
+    <button class="btn secondary" id="ns-cancel" style="margin-top:8px;">Cancel</button>
+  </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('ns-cancel').onclick = ()=>bg.remove();
+  document.getElementById('ns-save').onclick = async ()=>{
+    const name = document.getElementById('ns-name').value.trim();
+    if(!name){ toast('Name it first'); return; }
+    const id = uid();
+    await fsSet('stands', id, {id, name, lat, lng, notes:document.getElementById('ns-notes').value.trim(), createdAt:Date.now()});
+    bg.remove(); toast('Stand added'); updateMapMarkers();
+    if(TAB==='settings') renderSettings();
+  };
+}
+
+/* ---------- LOG (sightings/cameras/hazards) ---------- */
+function renderLog(){
+  const main = document.getElementById('main'); if(!main) return;
+  main.innerHTML = `
+    <div class="card">
+      <h2>Log an Entry</h2>
+      <label class="label">Type</label>
+      <select id="log-kind">
+        <option value="wildlife">Wildlife Sighting / Track</option>
+        <option value="camera">Trail Camera</option>
+        <option value="hazard">Hazard / Warning</option>
+      </select>
+      <div id="species-wrap">
+        <label class="label">Species</label>
+        <select id="log-species">${SPECIES.map(s=>`<option>${s}</option>`).join('')}</select>
+      </div>
+      <label class="label">Notes</label>
+      <textarea id="log-note" placeholder="What did you see? Direction of travel, buck/doe, sign, etc."></textarea>
+      <label class="label">Photo (optional)</label>
+      <input type="file" id="log-photo" accept="image/*" capture="environment">
+      <img id="log-preview" class="photo-preview" style="display:none;">
+      <label class="label">Location</label>
+      <button class="btn secondary" id="log-usegps" type="button">Use My Current GPS Location</button>
+      <div id="log-gps-status" style="font-size:12px;color:var(--text-dim);margin:8px 0;"></div>
+      <button class="btn" id="log-save" style="margin-top:6px;">Save Entry</button>
+    </div>
+    <div class="card">
+      <h2>Recent Entries</h2>
+      ${SIGHTINGS.length===0 ? `<div class="empty">Nothing logged yet.</div>` :
+        SIGHTINGS.slice().reverse().slice(0,20).map(s=>`
+        <div class="stand-item">
+          <div>
+            <span class="kindtag ${s.kind}">${s.kind}</span>
+            <div class="member-name" style="margin-top:4px;">${s.kind==='wildlife' ? escapeHtml(s.species) : escapeHtml(s.note.slice(0,30)||s.kind)}</div>
+            <div class="member-meta">${escapeHtml(s.note||'')}</div>
+            <div class="member-meta">${escapeHtml(s.author)} · ${timeAgo(s.timestamp)}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  `;
+  let gpsCoord = null;
+  document.getElementById('log-kind').onchange = (e)=>{
+    document.getElementById('species-wrap').style.display = e.target.value==='wildlife' ? 'block':'none';
+  };
+  document.getElementById('log-photo').onchange = (e)=>{
+    const f = e.target.files[0]; if(!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const canvas = document.createElement('canvas');
+        const maxW = 500; const scale = Math.min(1, maxW/img.width);
+        canvas.width = img.width*scale; canvas.height = img.height*scale;
+        canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.55);
+        document.getElementById('log-preview').src = dataUrl;
+        document.getElementById('log-preview').style.display='block';
+        document.getElementById('log-preview').dataset.value = dataUrl;
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  };
+  document.getElementById('log-usegps').onclick = async ()=>{
+    document.getElementById('log-gps-status').textContent = 'Getting location…';
+    try{ gpsCoord = await getPos(); document.getElementById('log-gps-status').textContent = `📍 Location captured (${gpsCoord.lat.toFixed(5)}, ${gpsCoord.lng.toFixed(5)})`; }
+    catch(e){ document.getElementById('log-gps-status').textContent = 'Could not get GPS location.'; }
+  };
+  document.getElementById('log-save').onclick = async ()=>{
+    const kind = document.getElementById('log-kind').value;
+    const note = document.getElementById('log-note').value.trim();
+    const species = document.getElementById('log-species').value;
+    const photo = document.getElementById('log-preview').dataset.value || null;
+    if(!gpsCoord){ toast('Capture a GPS location first'); return; }
+    const id = uid();
+    await fsSet('sightings', id, { id, kind, species: kind==='wildlife'?species:null, note, photo, lat:gpsCoord.lat, lng:gpsCoord.lng, author:ME.name, timestamp:Date.now() });
+    toast('Entry saved'); renderLog();
+  };
+}
+
+/* ---------- ROSTER ---------- */
+function renderRoster(){
+  const main = document.getElementById('main'); if(!main) return;
+  main.innerHTML = `
+    <div class="card">
+      <h2>Club Members</h2>
+      ${MEMBERS.map(m=>{
+        const isActive = ACTIVE.some(a=>a.memberId===m.id);
+        return `<div class="member-row">
+          <div>
+            <div class="member-name">${escapeHtml(m.name)} ${m.isAdmin ? '<span class="pill off">Admin</span>' : ''}</div>
+            <div class="member-meta">${escapeHtml(m.phone||'No number on file')}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="margin-bottom:6px;"><span class="pill ${isActive?'on':'off'}">${isActive?'On Property':'Off Property'}</span></div>
+            ${m.phone ? `<a class="call" href="tel:${m.phone.replace(/[^0-9+]/g,'')}">Call</a>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+/* ---------- SETTINGS / ADMIN ---------- */
+function renderSettings(){
+  const main = document.getElementById('main'); if(!main) return;
+  const shareUrl = window.location.href;
+  main.innerHTML = `
+    <div class="card">
+      <h2>Your Home Screen Shortcut</h2>
+      <p style="font-size:13px;color:var(--text-dim);">Share this link with members. Opened in Safari, they tap Share → Add to Home Screen, and it installs with the Hunt Club name and icon automatically.</p>
+      <code class="link-box">${escapeHtml(shareUrl)}</code>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=244-124-32&bgcolor=21-42-28&data=${encodeURIComponent(shareUrl)}" style="display:block;margin:0 auto 10px;border-radius:10px;">
+      <button class="btn secondary" id="copy-link">Copy Link</button>
+    </div>
+
+    ${ME.isAdmin ? `
+    <div class="card">
+      <h2>Stands (${STANDS.length})</h2>
+      <p style="font-size:12px;color:var(--text-dim);">On the Map tab, press and hold anywhere on the map to drop a new stand at that spot. Or add one using your current GPS below.</p>
+      <button class="btn secondary" id="add-stand-gps">Add Stand at My Current Location</button>
+      <div style="margin-top:12px;">
+        ${STANDS.length===0 ? `<div class="empty">No stands yet.</div>` :
+          STANDS.map(s=>`<div class="stand-item"><div><div class="member-name">${escapeHtml(s.name)}</div><div class="member-meta">${escapeHtml(s.notes||'')}</div></div><button class="btn danger" style="width:auto;padding:6px 12px;font-size:12px;" data-del-stand="${s.id}">Remove</button></div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <h2>Make Another Member Admin</h2>
+      <select id="promote-select">
+        <option value="">Choose member…</option>
+        ${MEMBERS.filter(m=>!m.isAdmin).map(m=>`<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('')}
+      </select>
+      <button class="btn secondary" id="promote-btn">Grant Admin</button>
+    </div>
+    ` : `<div class="card"><h2>Property Admin</h2><p style="font-size:13px;color:var(--text-dim);">${escapeHtml((MEMBERS.find(m=>m.isAdmin)||{}).name || 'Not yet assigned')} manages stand locations for the property. Contact them to add a stand.</p></div>`}
+
+    <div class="card">
+      <h2>About This App</h2>
+      <p style="font-size:12px;color:var(--text-dim);">Location sharing works while this page is open in your browser. iOS does not allow background tracking for web apps, so keep it open while hunting for the group to see you're safe. Check-in status is always visible even if location isn't.</p>
+    </div>
+  `;
+  document.getElementById('copy-link').onclick = ()=>{
+    navigator.clipboard.writeText(shareUrl).then(()=>toast('Link copied')).catch(()=>toast('Copy failed — long-press the box above'));
+  };
+  if(ME.isAdmin){
+    document.getElementById('add-stand-gps').onclick = async ()=>{
+      try{ const p = await getPos(); openAddStandModal(p.lat,p.lng); }
+      catch(e){ toast('Could not get GPS location'); }
+    };
+    document.querySelectorAll('[data-del-stand]').forEach(b=>{
+      b.onclick = async ()=>{
+        await fsDelete('stands', b.dataset.delStand); toast('Stand removed'); renderSettings();
+      };
+    });
+    document.getElementById('promote-btn').onclick = async ()=>{
+      const id = document.getElementById('promote-select').value;
+      if(!id){ toast('Choose someone first'); return; }
+      const m = MEMBERS.find(x=>x.id===id);
+      if(m) await fsSet('members', id, {...m, isAdmin:true});
+      toast('Admin granted'); renderSettings();
+    };
+  }
+}
+
+/* ---------- icons ---------- */
+function iconCompass(){ return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-2 5-5 2 2-5z"/></svg>`; }
+function iconMap(){ return `<svg viewBox="0 0 24 24"><path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2z"/><path d="M9 3v16M15 5v16"/></svg>`; }
+function iconCamera(){ return `<svg viewBox="0 0 24 24"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>`; }
+function iconPeople(){ return `<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.6"/><path d="M2.5 20c0-3.5 2.7-6 5.5-6s5.5 2.5 5.5 6M14 20c0-2.7 1.8-4.8 4-5.4"/></svg>`; }
+function iconGear(){ return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2.1-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2.1 1.2l-2.3-.9-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-.9a7 7 0 0 0 2.1 1.2L10 21h4l.5-2.6a7 7 0 0 0 2.1-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>`; }
+
+boot();
+</script>
+</body>
+</html>
